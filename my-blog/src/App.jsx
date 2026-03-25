@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const profile = {
-  name: "OYISHYI's Homepage",
+  name: "這④硪Dē烘焙雞，小夥伴們快來點踩硪8，暈",
   subtitle: "个人角落 / notes / links / weird internet energy",
   status: "在线，但可能在折腾工具链。",
   mood: "拨号音、荧光渐变、缓存已预热。",
@@ -519,7 +519,7 @@ export default function RetroHomepageSingleFile() {
               <div>
                 <div className="text-xl font-black uppercase tracking-[0.25em] md:text-2xl">{profile.name}</div>
                 <div className="mt-1 text-[11px] uppercase tracking-[0.28em] text-black/75">
-                  <span className="bg-black px-1 text-[#76ff7a]">welcome</span> to my digital bedroom wall
+                  <span className="bg-black px-1 text-[#76ff7a]">welcome</span> to Oyishyi's digital bedroom wall
                 </div>
               </div>
               <div className="border-2 border-black bg-white px-2 py-1 text-[11px] uppercase tracking-[0.18em]">
