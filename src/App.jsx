@@ -92,6 +92,7 @@ const initialMessages = [
 
 const desktopIcons = [
   { id: "about", label: "about.txt", emoji: "💾" },
+  { id: "freegpt", label: "★免费GPT★", emoji: "🤖", blink: true },
   { id: "journal", label: "diary.log", emoji: "📝" },
   { id: "links", label: "bookmarks", emoji: "🌐" },
   { id: "guestbook", label: "guestbook", emoji: "📬" },
@@ -100,6 +101,7 @@ const desktopIcons = [
 
 const windowPresets = {
   about: { title: "about me // profile.sys", w: "max-w-2xl" },
+  freegpt: { title: "免费GPT // chat.exe", w: "max-w-5xl" },
   journal: { title: "journal // diary.log", w: "max-w-3xl" },
   links: { title: "links // bookmarks.html", w: "max-w-2xl" },
   guestbook: { title: "guestbook // sign here", w: "max-w-xl" },
@@ -440,6 +442,128 @@ function SystemPanel({ soundOn, setSoundOn, crtOn, setCrtOn, theme, setTheme }) 
   );
 }
 
+function FreeGPTPanel() {
+  const FIXED_REPLY = "菜鸟，怎么可能让你用";
+
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      text: "欢迎使用 免费GPT 。有什么想问的？",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    listRef.current?.scrollTo({
+      top: listRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages, typing]);
+
+  const sendMessage = () => {
+    const value = input.trim();
+    if (!value || typing) return;
+
+    setMessages((prev) => [...prev, { role: "user", text: value }]);
+    setInput("");
+    setTyping(true);
+
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { role: "assistant", text: FIXED_REPLY }]);
+      setTyping(false);
+    }, 500);
+  };
+
+  return (
+    <div className="flex h-[65vh] flex-col gap-3 text-[13px]">
+      <div className="border-2 border-black bg-[#fff59d] px-3 py-2 text-[11px] font-black uppercase tracking-[0.2em]">
+        free gpt online
+      </div>
+
+      <div
+        ref={listRef}
+        className="flex-1 overflow-auto border-2 border-black bg-white p-3"
+      >
+        <div className="space-y-3">
+          {messages.map((msg, i) => (
+            <div
+              key={`${msg.role}-${i}-${msg.text}`}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            >
+              <div
+                className={[
+                  "max-w-[85%] border-2 border-black px-3 py-2 leading-6",
+                  msg.role === "user"
+                    ? "bg-[#d6f5ff]"
+                    : "bg-[#fffef8]",
+                ].join(" ")}
+              >
+                <div className="mb-1 text-[10px] font-black uppercase tracking-[0.15em]">
+                  {msg.role === "user" ? "you" : "免费gpt"}
+                </div>
+                <div>{msg.text}</div>
+              </div>
+            </div>
+          ))}
+
+          {typing && (
+            <div className="flex justify-start">
+              <div className="max-w-[85%] border-2 border-black bg-[#fffef8] px-3 py-2 leading-6">
+                <div className="mb-1 text-[10px] font-black uppercase tracking-[0.15em]">
+                  免费gpt
+                </div>
+                <div>...</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="border-2 border-black bg-white p-3">
+        <div className="flex gap-2">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+            rows={3}
+            placeholder="请输入你的问题..."
+            className="min-h-[84px] flex-1 resize-none border-2 border-black bg-[#fffef8] px-3 py-2 outline-none placeholder:text-black/40 focus:bg-[#ecfeff]"
+          />
+          <div className="flex flex-col gap-2">
+            <PixelButton onClick={sendMessage} className="h-fit">
+              send
+            </PixelButton>
+            <PixelButton
+              onClick={() =>
+                setMessages([
+                  {
+                    role: "assistant",
+                    text: "欢迎使用 免费GPT 。有什么想问的？",
+                  },
+                ])
+              }
+            >
+              clear
+            </PixelButton>
+          </div>
+        </div>
+
+        <div className="mt-2 text-[11px] uppercase tracking-[0.15em] text-black/60">
+          fixed response mode enabled
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function RetroHomepageSingleFile() {
   const [booted, setBooted] = useState(false);
   const [theme, setTheme] = useState("sunset");
@@ -481,6 +605,8 @@ export default function RetroHomepageSingleFile() {
             setTheme={setTheme}
           />
         );
+      case "freegpt":
+        return <FreeGPTPanel />;
       case "about":
       default:
         return <AboutPanel />;
@@ -554,7 +680,26 @@ export default function RetroHomepageSingleFile() {
                       }`}
                     >
                       <div className="text-2xl">{icon.emoji}</div>
-                      <div className="mt-2 text-[10px] font-black uppercase tracking-[0.16em]">{icon.label}</div>
+                      {icon.id === "freegpt" ? (
+                        <motion.div
+                          animate={{
+                            opacity: [1, 0.45, 1],
+                            scale: [1, 1.06, 1],
+                          }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 0.8,
+                            ease: "linear",
+                          }}
+                          className="mt-2 text-[10px] font-black uppercase tracking-[0.16em] text-[#ff1744]"
+                        >
+                          ★免费GPT★
+                        </motion.div>
+                      ) : (
+                        <div className="mt-2 text-[10px] font-black uppercase tracking-[0.16em]">
+                          {icon.label}
+                        </div>
+                      )}
                     </motion.button>
                   ))}
                 </div>
