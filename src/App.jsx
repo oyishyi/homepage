@@ -443,7 +443,7 @@ function SystemPanel({ soundOn, setSoundOn, crtOn, setCrtOn, theme, setTheme }) 
 }
 
 function FreeGPTPanel() {
-  const FIXED_REPLY = "菜鸟，怎么可能让你用";
+  const FIXED_REPLY = "菜鸟，这东东哪能让你白用！";
 
   const [messages, setMessages] = useState([
     {
